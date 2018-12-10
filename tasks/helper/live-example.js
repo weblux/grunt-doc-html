@@ -27,6 +27,15 @@ function registerPartials (grunt, files) {
       var section = path[2].replace(/\d*-/g, '')
       var partialName = section + '-' + filename
       var partial = grunt.file.read(filepath, { encoding: 'utf8' })
+
+      // escape docs in pattern if exist
+      var docs = /([^]*)---([^]*)---([^]*)---([^]*)/g.exec(partial)
+
+      if (docs !== null) {
+        var pattern = docs[1]
+        partial = pattern
+      }
+
       handlebars.registerPartial(partialName, partial)
     })
   })
@@ -36,6 +45,7 @@ function createLiveExample (file) {
   if (file.datas.data === undefined) {
     return ''
   }
+
   var example = handlebars.compile(file.datas.pattern)
   var datas = extend({}, file.datas.data, { root: { site: { settings: { icons: 'filled' } } } })
   datas = file.datas.data
